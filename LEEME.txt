@@ -1,0 +1,77 @@
+DANIELA — GALAXIA INTERACTIVA
+================================
+
+OBJETIVO
+Esta versión NO es un video ni una secuencia automática.
+Todo gira alrededor de una sola galaxia 3D explorable, inspirada en la parte
+de la galaxia del video de referencia.
+
+CÓMO PROBARLA
+1. Abre esta carpeta en VS Code.
+2. Instala/usa Live Server.
+3. Abre index.html con Live Server.
+
+También puedes usar:
+  python -m http.server 8000
+
+Luego abre:
+  http://localhost:8000
+
+IMPORTANTE
+Necesita conexión a internet para cargar Three.js desde jsDelivr.
+
+CONTROLES
+- Arrastrar: girar alrededor de la galaxia.
+- Rueda del mouse / pellizcar: zoom.
+- Tocar/click en un recuerdo: acercarse.
+- CENTRO: regresar a la vista principal.
+- AUTO: activar/desactivar giro lento.
+
+ARCHIVOS
+index.html        interfaz
+css/style.css     diseño visual
+js/config.js      textos, mensajes, posiciones de recuerdos
+js/main.js        galaxia 3D, partículas, cámara, bloom, interacción
+assets/           imágenes de los recuerdos
+
+PARA PONER FOTOS REALES
+Reemplaza cualquier PNG de assets/ por tu foto (manteniendo el mismo nombre),
+o cambia la ruta "image" correspondiente dentro de js/config.js.
+
+No hay escena final, contador, árbol-corazón ni reproducción automática.
+La galaxia es toda la experiencia.
+
+
+NOVEDADES V2
+- Corazones dorados flotando en 3D.
+- Estrellas fugaces.
+- Pulsos luminosos alrededor de cada recuerdo.
+- Efecto corazón al tocar un recuerdo.
+- Botón de música preparado.
+- Para agregar música, pon tu archivo como assets/musica.mp3.
+
+
+V3 — MÚSICA REAL INTEGRADA
+--------------------------
+- La canción está incluida como assets/musica.mp3.
+- Al pulsar ENTRAR A LA GALAXIA, intenta iniciar automáticamente.
+- También se controla desde ♫ MÚSICA.
+- Volumen inicial: 72%.
+- La galaxia reacciona en tiempo real al audio:
+  * graves -> centro/vórtice, bloom y luz principal
+  * medios -> girasol y corazones
+  * agudos -> motas/destellos
+- El efecto es deliberadamente suave para no convertirlo en una discoteca.
+- La pista se repite cuando termina porque la galaxia es una experiencia abierta.
+
+
+V4 — TOQUE MÁS AUTÉNTICO
+------------------------
+- Mayor densidad y jerarquía visual alrededor del centro.
+- Haze dorado / atmósfera luminosa detrás de la galaxia.
+- Lluvia suave de pétalos dorados alrededor de la escena.
+- Líneas de constelación que conectan el centro con cada recuerdo.
+- Mini órbita de corazones cerca del vórtice para darle identidad propia.
+- Corona luminosa al pasar por encima de un recuerdo.
+- Textos y mensajes ajustados para un tono más cálido y personal.
+- Detalles de firma visual: “hecho con cariño”.
