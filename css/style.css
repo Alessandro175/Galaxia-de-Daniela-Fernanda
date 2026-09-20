@@ -228,3 +228,25 @@ button{font:inherit}
     radial-gradient(circle at 40% 38%, rgba(255,195,0,.05), transparent 22%);
   mix-blend-mode:screen
 }
+
+/* ===== V5 CENTRAL HEART ===== */
+.heart-hint{
+ position:fixed;z-index:9;left:50%;bottom:82px;transform:translateX(-50%);
+ padding:8px 13px;border-radius:999px;border:1px solid rgba(255,230,117,.28);
+ background:rgba(6,6,5,.68);color:#ffe67c;font-size:9px;letter-spacing:.18em;
+ backdrop-filter:blur(9px);text-shadow:0 0 12px rgba(255,205,40,.38);
+ transition:.5s;pointer-events:none
+}
+.center-phrase-pop{
+ position:fixed;z-index:13;left:50%;top:50%;width:min(720px,88vw);
+ transform:translate(-50%,-45%) scale(.92);padding:30px 34px;text-align:center;
+ border-radius:28px;border:1px solid rgba(255,228,117,.22);
+ background:linear-gradient(145deg,rgba(6,6,5,.90),rgba(28,21,6,.75));
+ box-shadow:0 34px 120px rgba(0,0,0,.78),0 0 85px rgba(255,196,0,.11);
+ backdrop-filter:blur(14px);opacity:0;visibility:hidden;pointer-events:none;
+ transition:.65s cubic-bezier(.18,.85,.2,1)
+}
+.center-phrase-pop.show{opacity:1;visibility:visible;transform:translate(-50%,-50%) scale(1)}
+.center-phrase-pop .tiny{display:block;font-size:9px;letter-spacing:.32em;color:#ffe372;margin-bottom:13px}
+.center-phrase-pop p{margin:0;font:italic clamp(25px,4.1vw,46px)/1.16 "Cormorant Garamond",Georgia,serif;color:#fff5cf;text-shadow:0 0 28px rgba(255,205,37,.16)}
+.center-phrase-pop b{display:block;margin-top:16px;color:#ffdf52;font-size:23px;filter:drop-shadow(0 0 12px rgba(255,203,37,.45))}

@@ -354,6 +354,7 @@ const textureLoader = new THREE.TextureLoader();
 const memoryMeshes = [];
 const memoryHalos = [];
 const memoryBases = [];
+const specialTargets = [];
 
 function createMemoryNodes() {
   GALAXY_CONFIG.memories.forEach((memory, index) => {
@@ -872,7 +873,86 @@ function createCentralHeartOrbit() {
   root.add(group);
   return group;
 }
+
 const centralHeartOrbit = createCentralHeartOrbit();
+
+function createHeartShape() {
+  const shape = new THREE.Shape();
+  shape.moveTo(0, 0.55);
+  shape.bezierCurveTo(0, 0.98, -0.74, 1.26, -1.14, 0.75);
+  shape.bezierCurveTo(-1.68, 0.06, -1.0, -0.66, 0, -1.43);
+  shape.bezierCurveTo(1.0, -0.66, 1.68, 0.06, 1.14, 0.75);
+  shape.bezierCurveTo(0.74, 1.26, 0, 0.98, 0, 0.55);
+  return shape;
+}
+
+function createCentralGoldenHeart() {
+  const group = new THREE.Group();
+
+  const geometry = new THREE.ExtrudeGeometry(createHeartShape(), {
+    depth: 0.32,
+    bevelEnabled: true,
+    bevelSegments: 5,
+    bevelSize: 0.09,
+    bevelThickness: 0.08
+  });
+  geometry.center();
+
+  const material = new THREE.MeshStandardMaterial({
+    color: 0xffd52f,
+    emissive: 0xff9f00,
+    emissiveIntensity: 1.25,
+    roughness: 0.28,
+    metalness: 0.22
+  });
+
+  const mesh = new THREE.Mesh(geometry, material);
+  mesh.userData.special = "centerHeart";
+  group.add(mesh);
+
+  const glow = new THREE.Sprite(
+    new THREE.SpriteMaterial({
+      map: softDiscTexture,
+      color: 0xffd43a,
+      transparent: true,
+      opacity: 0.64,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending
+    })
+  );
+  glow.scale.set(4.7,4.7,1);
+  glow.position.z = -0.18;
+  group.add(glow);
+
+  const light = new THREE.PointLight(0xffc726, 18, 12, 2);
+  light.position.set(0,.4,1.0);
+  group.add(light);
+
+  const sparks = new THREE.Group();
+  for(let i=0;i<28;i++){
+    const spr = new THREE.Sprite(new THREE.SpriteMaterial({
+      map: glowTexture,
+      color: i%3 ? 0xffe466 : 0xffffcc,
+      transparent:true,opacity:.55,depthWrite:false,blending:THREE.AdditiveBlending
+    }));
+    const a=i/28*Math.PI*2, r=1.7+(i%4)*.12, s=.10+(i%3)*.03;
+    spr.position.set(Math.cos(a)*r,Math.sin(a)*r,0);
+    spr.scale.set(s,s,1);
+    spr.userData={a,r,s,phase:i*.37};
+    sparks.add(spr);
+  }
+  group.add(sparks);
+
+  group.position.set(0,1.75,0);
+  group.scale.setScalar(.74);
+  group.userData={mesh,glow,light,sparks};
+  root.add(group);
+  specialTargets.push(mesh);
+  return group;
+}
+
+const centralGoldenHeart = createCentralGoldenHeart();
+
 
 /* ---------------------------------------------------------
    HOVER CROWN
@@ -912,6 +992,9 @@ const hud = $("#hud");
 const hint = $("#hint");
 const memoryCard = $("#memoryCard");
 const tooltip = $("#tooltip");
+const heartHint = $("#heartHint");
+const centerPhrase = $("#centerPhrase");
+let heartPhraseVisible = false;
 
 const music = $("#bgMusic");
 const musicBtn = $("#musicBtn");
@@ -1017,6 +1100,8 @@ function showGalaxyUI() {
   hint.classList.remove("hidden");
 
   setTimeout(() => hint.classList.add("hidden"), 7000);
+  setTimeout(() => heartHint.classList.remove("hidden"), 2200);
+  setTimeout(() => heartHint.classList.add("hidden"), 9000);
 
   camera.position.set(0, 18, 38);
   controls.target.set(0, 1.4, -2.2);
@@ -1051,7 +1136,22 @@ $("#enterGalaxy").addEventListener("click", async () => {
   }
 });
 
+function showCenterPhrase() {
+  heartPhraseVisible = !heartPhraseVisible;
+  centerPhrase.classList.toggle("show", heartPhraseVisible);
+  heartHint.classList.add("hidden");
+  spawnHeartPop(innerWidth * 0.5, innerHeight * 0.52);
+  if (heartPhraseVisible) {
+    setTimeout(() => {
+      centerPhrase.classList.remove("show");
+      heartPhraseVisible = false;
+    }, 6500);
+  }
+}
+
 function openMemory(index) {
+  heartPhraseVisible = false;
+  centerPhrase.classList.remove("show");
   const memory = GALAXY_CONFIG.memories[index];
   const sprite = memoryMeshes[index];
   const worldPos = new THREE.Vector3();
@@ -1093,6 +1193,8 @@ function openMemory(index) {
 
 function goCenter() {
   selected = null;
+  heartPhraseVisible = false;
+  centerPhrase.classList.remove("show");
   memoryCard.classList.remove("open");
 
   focusTween = {
@@ -1138,8 +1240,14 @@ renderer.domElement.addEventListener("pointerup", (event) => {
 
   setPointer(event);
   raycaster.setFromCamera(pointer, camera);
-  const hits = raycaster.intersectObjects(memoryMeshes, false);
+  const heartHits = raycaster.intersectObjects(specialTargets, false);
 
+  if (heartHits.length) {
+    showCenterPhrase();
+    return;
+  }
+
+  const hits = raycaster.intersectObjects(memoryMeshes, false);
   if (hits.length) {
     spawnHeartPop(event.clientX, event.clientY);
     openMemory(hits[0].object.userData.memoryIndex);
@@ -1151,6 +1259,16 @@ renderer.domElement.addEventListener("pointermove", (event) => {
 
   setPointer(event);
   raycaster.setFromCamera(pointer, camera);
+  const heartHits = raycaster.intersectObjects(specialTargets, false);
+  if (heartHits.length) {
+    renderer.domElement.style.cursor = "pointer";
+    tooltip.textContent = "UN MENSAJE PARA TI 💛";
+    tooltip.style.left = event.clientX + "px";
+    tooltip.style.top = event.clientY + "px";
+    tooltip.classList.add("show");
+    return;
+  }
+
   const hits = raycaster.intersectObjects(memoryMeshes, false);
 
   if (hovered !== null) {
@@ -1391,6 +1509,30 @@ function animate() {
   } else {
     memoryCard.style.boxShadow = "";
   }
+
+
+  const heartBreath = 0.74 + Math.sin(t * 1.45) * 0.018 + reactiveMid * 0.055;
+  centralGoldenHeart.scale.setScalar(heartBreath);
+  centralGoldenHeart.rotation.y = Math.sin(t * 0.55) * 0.10;
+  centralGoldenHeart.rotation.z = Math.sin(t * 0.72) * 0.028;
+  centralGoldenHeart.position.y = 1.75 + Math.sin(t * 1.0) * 0.07;
+
+  centralGoldenHeart.userData.mesh.material.emissiveIntensity =
+    1.05 + reactiveBass * 1.1 + reactiveMid * 0.32;
+  centralGoldenHeart.userData.glow.material.opacity =
+    0.46 + reactiveBass * 0.34 + reactiveHigh * 0.12;
+  centralGoldenHeart.userData.light.intensity =
+    14 + reactiveBass * 18 + reactiveMid * 5;
+
+  centralGoldenHeart.userData.sparks.children.forEach((spr) => {
+    const d = spr.userData;
+    const a = d.a + t * 0.48;
+    const r = d.r + Math.sin(t * 1.7 + d.phase) * 0.08;
+    spr.position.set(Math.cos(a)*r,Math.sin(a)*r,Math.sin(t+d.phase)*0.06);
+    const ss = d.s * (1 + reactiveHigh * 0.45);
+    spr.scale.set(ss,ss,1);
+    spr.material.opacity = 0.26 + (Math.sin(t*2.4+d.phase)*0.5+0.5)*0.44;
+  });
 
   composer.render();
   requestAnimationFrame(animate);
