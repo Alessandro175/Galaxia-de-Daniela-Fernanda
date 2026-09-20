@@ -17,6 +17,29 @@ export const GALAXY_CONFIG = {
     "STRAY KIDS"
   ],
 
+  orbitPhrases: [
+    "Si el universo pudiera florecer, tendría tu nombre: Daniela. 🌻✨",
+    "En un universo lleno de estrellas, elegiría la galaxia donde floreces tú, Daniela. 💛",
+    "FLORES PARA TI",
+    "MI PRIMAVERA",
+    "BUENOS MOMENTOS",
+    "BRILLA MUCHO",
+    "HECHO CON CARIÑO",
+    "SIGAMOS SUMANDO",
+    "QUE TENGAS UN BONITO DÍA",
+    "DANI 🌻",
+    "UN DETALLE HECHO CON CARIÑO",
+    "QUE SIEMPRE TE ACOMPAÑEN DÍAS BONITOS",
+    "MAKIS Y MOMENTOS BONITOS",
+    "TU VIBRA TAMBIÉN BRILLA AQUÍ",
+    "UN RINCÓN AMARILLO PARA TI",
+    "PEQUEÑAS COSAS, BONITOS RECUERDOS",
+    "TU SONRISA MERECE SU PROPIA GALAXIA",
+    "STRAY KIDS VIBE ✦",
+    "QUE NUNCA TE FALTEN FLORES",
+    "PARA DANI, CON CARIÑO"
+  ],
+
   memories: [
     {
       title: "Flores para ti",

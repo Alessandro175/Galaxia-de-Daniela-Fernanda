@@ -481,6 +481,213 @@ function createFloorWords() {
 createFloorWords();
 
 /* ---------------------------------------------------------
+   ORBITING PHRASES — 10 UPRIGHT MOVING PHRASES
+--------------------------------------------------------- */
+
+function makeOrbitPhraseTexture(text) {
+  const canvas = document.createElement("canvas");
+  canvas.width = 1400;
+  canvas.height = 260;
+  const ctx = canvas.getContext("2d");
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+
+  // Soft glow
+  ctx.font = "italic 74px Georgia";
+  ctx.shadowColor = "rgba(255,208,56,.95)";
+  ctx.shadowBlur = 24;
+  ctx.fillStyle = "#fff6c6";
+  ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.needsUpdate = true;
+  return texture;
+}
+
+function createOrbitPhrases() {
+  const group = new THREE.Group();
+
+  GALAXY_CONFIG.orbitPhrases.forEach((text, i) => {
+    const texture = makeOrbitPhraseTexture(text);
+    const material = new THREE.SpriteMaterial({
+      map: texture,
+      transparent: true,
+      opacity: 0.88,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+      color: 0xffffff
+    });
+
+    const sprite = new THREE.Sprite(material);
+
+    const radius = 7.0 + (i % 5) * 1.15 + (i > 9 ? 3.0 : i > 4 ? 1.0 : 0);
+    const angle = i / GALAXY_CONFIG.orbitPhrases.length * Math.PI * 2 + (i % 2 ? 0.22 : -0.12);
+    const yBase = 2.4 + (i % 4) * 0.95 + (i > 9 ? 1.2 : i > 6 ? 0.5 : 0);
+
+    const width = text.length > 45 ? 8.8 : text.length > 22 ? 6.9 : 5.3;
+    const height = text.length > 45 ? 1.65 : 1.15;
+
+    sprite.position.set(
+      Math.cos(angle) * radius,
+      yBase,
+      Math.sin(angle) * radius * 0.78 - 1.0
+    );
+    sprite.scale.set(width, height, 1);
+
+    sprite.userData = {
+      angle,
+      radius,
+      yBase,
+      speed: 0.06 + (i % 4) * 0.012,
+      bob: 0.28 + (i % 3) * 0.05,
+      phase: i * 0.7,
+      scaleX: width,
+      scaleY: height
+    };
+
+    group.add(sprite);
+  });
+
+  root.add(group);
+  return group;
+}
+
+const orbitPhraseGroup = createOrbitPhrases();
+
+function createWhisperPhraseBand() {
+  const group = new THREE.Group();
+  const extraTexts = [
+    "floreces tú", "pequeña primavera", "detalles bonitos", "makis", "stray kids",
+    "buenos momentos", "con cariño", "dani", "flores amarillas", "sonríe"
+  ];
+
+  extraTexts.forEach((text, i) => {
+    const texture = makeOrbitPhraseTexture(text.toUpperCase());
+    const mat = new THREE.SpriteMaterial({
+      map: texture,
+      transparent: true,
+      opacity: 0.42,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+      color: 0xfff4c2
+    });
+    const sprite = new THREE.Sprite(mat);
+    const radius = 14.6 + (i % 5) * 1.1;
+    const angle = i / extraTexts.length * Math.PI * 2;
+    const yBase = 5.1 + (i % 2) * 0.9;
+    sprite.scale.set(3.2, 0.8, 1);
+    sprite.userData = { angle, radius, yBase, phase: i * 0.5, speed: 0.032 + (i % 3) * 0.006 };
+    group.add(sprite);
+  });
+
+  root.add(group);
+  return group;
+}
+const whisperPhraseBand = createWhisperPhraseBand();
+
+function makeSunflowerSpriteTexture() {
+  const c = document.createElement("canvas");
+  c.width = c.height = 128;
+  const ctx = c.getContext("2d");
+  ctx.translate(64,64);
+  for(let i=0;i<14;i++){
+    ctx.save();
+    ctx.rotate(i*Math.PI*2/14);
+    const g = ctx.createLinearGradient(0,-38,0,0);
+    g.addColorStop(0,"#fff2a0");
+    g.addColorStop(.55,"#ffd22f");
+    g.addColorStop(1,"#c77f05");
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.ellipse(0,-26,10,26,0,0,Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+  }
+  const cg = ctx.createRadialGradient(0,0,0,0,0,18);
+  cg.addColorStop(0,"#9b6720");
+  cg.addColorStop(1,"#3c1f08");
+  ctx.fillStyle = cg;
+  ctx.beginPath();
+  ctx.arc(0,0,18,0,Math.PI*2);
+  ctx.fill();
+  return new THREE.CanvasTexture(c);
+}
+const sunflowerSpriteTexture = makeSunflowerSpriteTexture();
+
+function createSunflowerSatellites() {
+  const group = new THREE.Group();
+  for (let i = 0; i < 8; i++) {
+    const spr = new THREE.Sprite(new THREE.SpriteMaterial({
+      map: sunflowerSpriteTexture,
+      transparent: true,
+      opacity: 0.82,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending
+    }));
+    const scale = 0.55 + (i % 3) * 0.10;
+    spr.scale.set(scale, scale, 1);
+    spr.userData = { angle: i / 8 * Math.PI * 2, radius: 4.4 + (i % 2) * 0.55, base: scale, phase: i * 0.8 };
+    group.add(spr);
+  }
+  root.add(group);
+  return group;
+}
+const sunflowerSatellites = createSunflowerSatellites();
+
+function createCenterLightRays() {
+  const group = new THREE.Group();
+  for (let i = 0; i < 12; i++) {
+    const geo = new THREE.PlaneGeometry(0.32, 7.5);
+    const mat = new THREE.MeshBasicMaterial({
+      color: i % 2 ? 0xffdf72 : 0xffc93b,
+      transparent: true,
+      opacity: 0.10,
+      depthWrite: false,
+      side: THREE.DoubleSide,
+      blending: THREE.AdditiveBlending
+    });
+    const beam = new THREE.Mesh(geo, mat);
+    beam.userData = { angle: i / 12 * Math.PI * 2, phase: i * 0.45 };
+    group.add(beam);
+  }
+  root.add(group);
+  return group;
+}
+const centerLightRays = createCenterLightRays();
+
+function createMemorySparkleGroups() {
+  const groups = [];
+  memoryMeshes.forEach((sprite, idx) => {
+    const g = new THREE.Group();
+    for (let i = 0; i < 10; i++) {
+      const s = new THREE.Sprite(new THREE.SpriteMaterial({
+        map: glowTexture,
+        color: i % 2 ? 0xfff1b0 : 0xffd54b,
+        transparent: true,
+        opacity: 0.25,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending
+      }));
+      const scale = 0.10 + (i % 3) * 0.03;
+      s.scale.set(scale, scale, 1);
+      s.userData = { angle: i / 10 * Math.PI * 2, radius: 1.7 + (i % 2) * 0.2, phase: i * 0.7, base: scale, index: idx };
+      g.add(s);
+    }
+    root.add(g);
+    groups.push(g);
+  });
+  return groups;
+}
+const memorySparkleGroups = createMemorySparkleGroups();
+
+
+
+
+
+/* ---------------------------------------------------------
    DECORATIVE GOLDEN ORBITS
 --------------------------------------------------------- */
 
@@ -621,7 +828,7 @@ const heartField = createHeartField();
 function createShootingStars() {
   const group = new THREE.Group();
 
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 10; i++) {
     const geo = new THREE.BufferGeometry().setFromPoints([
       new THREE.Vector3(0,0,0),
       new THREE.Vector3(-2.4,0.55,0.3)
@@ -1097,6 +1304,62 @@ musicBtn.addEventListener("click", async () => {
   }
 });
 
+
+function spawnHeartBurst(x, y, count = 5) {
+  for (let i = 0; i < count; i++) {
+    const offsetX = (Math.random() - 0.5) * 34;
+    const offsetY = (Math.random() - 0.5) * 24;
+    setTimeout(() => spawnHeartPop(x + offsetX, y + offsetY), i * 45);
+  }
+}
+
+
+function spawnStarBurst(x, y, count = 5) {
+  for (let i = 0; i < count; i++) {
+    const s = document.createElement("div");
+    s.className = "star-pop";
+    s.textContent = Math.random() > 0.5 ? "✦" : "✨";
+    s.style.left = (x + (Math.random() - 0.5) * 34) + "px";
+    s.style.top = (y + (Math.random() - 0.5) * 22) + "px";
+    s.style.fontSize = (14 + Math.random() * 12) + "px";
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 1300);
+  }
+}
+
+function spawnDustBurst(x, y, count = 10) {
+  for (let i = 0; i < count; i++) {
+    const d = document.createElement("div");
+    d.className = "dust-pop";
+    d.style.left = x + "px";
+    d.style.top = y + "px";
+    d.style.setProperty("--dx", ((Math.random() - 0.5) * 110) + "px");
+    d.style.setProperty("--dy", ((Math.random() - 0.5) * 90 - 30) + "px");
+    document.body.appendChild(d);
+    setTimeout(() => d.remove(), 1150);
+  }
+}
+
+function spawnMagicBurst(x, y) {
+  spawnHeartBurst(x, y, 8);
+  spawnStarBurst(x, y, 6);
+  spawnDustBurst(x, y, 12);
+}
+
+let lastTrailSpark = 0;
+function spawnCursorSpark(x, y) {
+  const now = performance.now();
+  if (now - lastTrailSpark < 34) return;
+  lastTrailSpark = now;
+
+  const s = document.createElement("div");
+  s.className = "cursor-spark";
+  s.style.left = x + "px";
+  s.style.top = y + "px";
+  document.body.appendChild(s);
+  setTimeout(() => s.remove(), 850);
+}
+
 function spawnHeartPop(x, y) {
   const h = document.createElement("div");
   h.className = "heart-pop";
@@ -1162,7 +1425,7 @@ function showCenterPhrase() {
   heartPhraseVisible = !heartPhraseVisible;
   centerPhrase.classList.toggle("show", heartPhraseVisible);
   heartHint.classList.add("hidden");
-  spawnHeartPop(innerWidth * 0.5, innerHeight * 0.52);
+  spawnMagicBurst(innerWidth * 0.5, innerHeight * 0.52);
   if (heartPhraseVisible) {
     setTimeout(() => {
       centerPhrase.classList.remove("show");
@@ -1260,9 +1523,12 @@ renderer.domElement.addEventListener("pointerup", (event) => {
 
   if (Math.hypot(dx, dy) > 8) return;
 
+  spawnCursorSpark(event.clientX, event.clientY);
   setPointer(event);
   raycaster.setFromCamera(pointer, camera);
   const heartHits = raycaster.intersectObjects(specialTargets, false);
+
+  spawnMagicBurst(event.clientX, event.clientY);
 
   if (heartHits.length) {
     showCenterPhrase();
@@ -1271,7 +1537,6 @@ renderer.domElement.addEventListener("pointerup", (event) => {
 
   const hits = raycaster.intersectObjects(memoryMeshes, false);
   if (hits.length) {
-    spawnHeartPop(event.clientX, event.clientY);
     openMemory(hits[0].object.userData.memoryIndex);
   }
 });
@@ -1279,6 +1544,7 @@ renderer.domElement.addEventListener("pointerup", (event) => {
 renderer.domElement.addEventListener("pointermove", (event) => {
   if (welcome && !welcome.classList.contains("hide")) return;
 
+  spawnCursorSpark(event.clientX, event.clientY);
   setPointer(event);
   raycaster.setFromCamera(pointer, camera);
   const heartHits = raycaster.intersectObjects(specialTargets, false);
@@ -1573,6 +1839,76 @@ function animate() {
   if (musicEnabled) {
     heartHint.style.letterSpacing = (0.18 + reactiveHigh * 0.10).toFixed(2) + "em";
   }
+
+
+  // Upright orbiting phrases
+  orbitPhraseGroup.children.forEach((sprite, i) => {
+    const d = sprite.userData;
+    d.angle += d.speed * 0.0028;
+
+    const x = Math.cos(d.angle + t * d.speed) * d.radius;
+    const z = Math.sin(d.angle + t * d.speed) * d.radius * 0.78 - 1.0;
+    const y = d.yBase + Math.sin(t * 0.9 + d.phase) * d.bob;
+
+    sprite.position.set(x, y, z);
+
+    // Keep phrases upright and readable
+    const sPulse = 1 + reactiveMid * 0.08 + Math.sin(t * 1.2 + d.phase) * 0.018;
+    sprite.scale.set(d.scaleX * sPulse, d.scaleY * sPulse, 1);
+    sprite.material.opacity = 0.70 + (Math.sin(t * 1.4 + d.phase) * 0.5 + 0.5) * 0.22 + reactiveHigh * 0.08;
+  });
+
+
+  // outer whisper phrase band
+  whisperPhraseBand.children.forEach((sprite, i) => {
+    const d = sprite.userData;
+    const a = d.angle - t * d.speed;
+    sprite.position.set(
+      Math.cos(a) * d.radius,
+      d.yBase + Math.sin(t * 0.75 + d.phase) * 0.22,
+      Math.sin(a) * d.radius * 0.78 - 1.0
+    );
+    const pulse = 1 + Math.sin(t * 1.15 + d.phase) * 0.035;
+    sprite.scale.set(3.2 * pulse, 0.8 * pulse, 1);
+    sprite.material.opacity = 0.26 + (Math.sin(t * 1.2 + d.phase) * 0.5 + 0.5) * 0.18;
+  });
+
+  // mini sunflowers around the heart
+  sunflowerSatellites.position.copy(centralGoldenHeart.position);
+  sunflowerSatellites.children.forEach((spr, i) => {
+    const d = spr.userData;
+    const a = d.angle + t * 0.32 + Math.sin(t * 0.8 + d.phase) * 0.03;
+    const r = d.radius + reactiveMid * 0.18;
+    spr.position.set(Math.cos(a) * r, 0.25 + Math.sin(t * 1.4 + d.phase) * 0.18, Math.sin(a) * r * 0.78);
+    const ss = d.base * (1 + reactiveMid * 0.22);
+    spr.scale.set(ss, ss, 1);
+    spr.material.opacity = 0.62 + reactiveHigh * 0.18;
+  });
+
+  // soft center rays
+  centerLightRays.position.copy(centralGoldenHeart.position);
+  centerLightRays.children.forEach((beam, i) => {
+    const d = beam.userData;
+    beam.rotation.z = d.angle + t * 0.05;
+    beam.position.set(Math.cos(d.angle) * 0.18, 1.6 + Math.sin(t + d.phase) * 0.12, Math.sin(d.angle) * 0.14);
+    beam.material.opacity = 0.04 + reactiveBass * 0.08 + (Math.sin(t * 1.3 + d.phase) * 0.5 + 0.5) * 0.05;
+    beam.scale.y = 1 + reactiveBass * 0.25;
+  });
+
+  // sparkle crowns around each memory
+  memorySparkleGroups.forEach((group, gi) => {
+    const basePos = memoryMeshes[gi].parent.position;
+    group.position.set(basePos.x, basePos.y + 1.15, basePos.z);
+    group.children.forEach((spr, i) => {
+      const d = spr.userData;
+      const a = d.angle + t * 0.65 + gi * 0.2;
+      const r = d.radius + (hovered === gi ? 0.22 : 0) + reactiveHigh * 0.08;
+      spr.position.set(Math.cos(a) * r, Math.sin(t * 1.8 + d.phase) * 0.22, Math.sin(a) * r * 0.78);
+      const ss = d.base * (hovered === gi ? 1.5 : 1);
+      spr.scale.set(ss, ss, 1);
+      spr.material.opacity = (hovered === gi ? 0.52 : 0.16) + (Math.sin(t * 3 + d.phase) * 0.5 + 0.5) * 0.16;
+    });
+  });
 
   composer.render();
   requestAnimationFrame(animate);

@@ -97,3 +97,25 @@ V6 — MÁS BONITO + GUSTOS DE ELLA
   * más motas
   * más corazones y pétalos
 - Halo de destellos extra alrededor del corazón central.
+
+
+V7 — FRASES EN ÓRBITA + CORAZONES AL HACER CLICK
+-----------------------------------------------
+- Se añadieron 10 frases flotantes y derechas (no acostadas).
+- Las frases orbitan alrededor de la galaxia y se mueven suavemente.
+- Ahora cualquier click dentro de la galaxia genera una ráfaga de corazones.
+- Los clicks sobre recuerdos o el corazón central también disparan corazones.
+
+
+V8 — 10 MEJORAS MÁS
+-------------------
+1. 10 frases extra (ahora hay 20 en órbita).
+2. Segunda banda de frases en órbita.
+3. Explosión de estrellas al hacer click.
+4. Explosión de polvo dorado al hacer click.
+5. Ráfaga de corazones más grande.
+6. Chispas que siguen el cursor.
+7. Más estrellas fugaces.
+8. Mini girasoles orbitando el corazón central.
+9. Rayos de luz suaves alrededor del corazón.
+10. Chispas orbitando cada recuerdo.
