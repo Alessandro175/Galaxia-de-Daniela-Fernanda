@@ -119,22 +119,3 @@ V8 — 10 MEJORAS MÁS
 8. Mini girasoles orbitando el corazón central.
 9. Rayos de luz suaves alrededor del corazón.
 10. Chispas orbitando cada recuerdo.
-
-
-V9 — ULTRA MEGA
----------------
-Esta versión ya no solo agrega cosas:
-la idea fue volverla MÁS FINA y MÁS BONITA.
-
-Mejoras nuevas:
-- frases más elegantes y mejor escogidas;
-- tipografía/gradientes más bonitos en frases orbitando;
-- aurora dorada al fondo;
-- bokeh luminoso flotante;
-- cometas orbitando el corazón central;
-- rieles elípticos brillantes;
-- explosión más grande al hacer click;
-- corazón/gran detalle visual al click;
-- shimmer circular al click;
-- mensaje extra en la interfaz;
-- memoria visual más rica pero cuidando que no se vea fea.

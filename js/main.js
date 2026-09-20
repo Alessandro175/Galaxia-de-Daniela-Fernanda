@@ -484,39 +484,22 @@ createFloorWords();
    ORBITING PHRASES — 10 UPRIGHT MOVING PHRASES
 --------------------------------------------------------- */
 
-function makeOrbitPhraseTexture(text, variant = 0) {
+function makeOrbitPhraseTexture(text) {
   const canvas = document.createElement("canvas");
-  canvas.width = 1500;
-  canvas.height = 280;
+  canvas.width = 1400;
+  canvas.height = 260;
   const ctx = canvas.getContext("2d");
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
 
-  const palettes = [
-    ["#fffbe2", "#ffd85e", "#cb8508"],
-    ["#fffdf1", "#ffeaa0", "#d4a11a"],
-    ["#fff4d5", "#ffcf4d", "#b76e00"]
-  ];
-  const palette = palettes[variant % palettes.length];
-  const grad = ctx.createLinearGradient(0, 40, 0, 220);
-  grad.addColorStop(0, palette[0]);
-  grad.addColorStop(.56, palette[1]);
-  grad.addColorStop(1, palette[2]);
-
-  ctx.font = "italic 76px Georgia";
-  ctx.shadowColor = variant === 1 ? "rgba(255,231,147,.92)" : "rgba(255,208,56,.95)";
-  ctx.shadowBlur = 28;
-  ctx.fillStyle = grad;
+  // Soft glow
+  ctx.font = "italic 74px Georgia";
+  ctx.shadowColor = "rgba(255,208,56,.95)";
+  ctx.shadowBlur = 24;
+  ctx.fillStyle = "#fff6c6";
   ctx.fillText(text, canvas.width / 2, canvas.height / 2);
-
-  ctx.strokeStyle = "rgba(255,230,140,.20)";
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.moveTo(canvas.width * 0.2, canvas.height * 0.72);
-  ctx.lineTo(canvas.width * 0.8, canvas.height * 0.72);
-  ctx.stroke();
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
@@ -528,7 +511,7 @@ function createOrbitPhrases() {
   const group = new THREE.Group();
 
   GALAXY_CONFIG.orbitPhrases.forEach((text, i) => {
-    const texture = makeOrbitPhraseTexture(text, i % 3);
+    const texture = makeOrbitPhraseTexture(text);
     const material = new THREE.SpriteMaterial({
       map: texture,
       transparent: true,
@@ -540,9 +523,9 @@ function createOrbitPhrases() {
 
     const sprite = new THREE.Sprite(material);
 
-    const radius = 7.1 + (i % 6) * 1.02 + (i > 11 ? 3.4 : i > 5 ? 1.25 : 0);
+    const radius = 7.0 + (i % 5) * 1.15 + (i > 9 ? 3.0 : i > 4 ? 1.0 : 0);
     const angle = i / GALAXY_CONFIG.orbitPhrases.length * Math.PI * 2 + (i % 2 ? 0.22 : -0.12);
-    const yBase = 2.25 + (i % 5) * 0.82 + (i > 11 ? 1.3 : i > 7 ? 0.55 : 0);
+    const yBase = 2.4 + (i % 4) * 0.95 + (i > 9 ? 1.2 : i > 6 ? 0.5 : 0);
 
     const width = text.length > 45 ? 8.8 : text.length > 22 ? 6.9 : 5.3;
     const height = text.length > 45 ? 1.65 : 1.15;
@@ -582,7 +565,7 @@ function createWhisperPhraseBand() {
   ];
 
   extraTexts.forEach((text, i) => {
-    const texture = makeOrbitPhraseTexture(text.toUpperCase(), (i + 1) % 3);
+    const texture = makeOrbitPhraseTexture(text.toUpperCase());
     const mat = new THREE.SpriteMaterial({
       map: texture,
       transparent: true,
@@ -679,7 +662,7 @@ function createMemorySparkleGroups() {
   const groups = [];
   memoryMeshes.forEach((sprite, idx) => {
     const g = new THREE.Group();
-    for (let i = 0; i < 14; i++) {
+    for (let i = 0; i < 10; i++) {
       const s = new THREE.Sprite(new THREE.SpriteMaterial({
         map: glowTexture,
         color: i % 2 ? 0xfff1b0 : 0xffd54b,
@@ -699,97 +682,6 @@ function createMemorySparkleGroups() {
   return groups;
 }
 const memorySparkleGroups = createMemorySparkleGroups();
-
-function createAuroraShell() {
-  const group = new THREE.Group();
-  for (let i = 0; i < 4; i++) {
-    const material = new THREE.SpriteMaterial({
-      map: softDiscTexture,
-      color: i % 2 ? 0xffd86a : 0xfff2bb,
-      transparent: true,
-      opacity: 0.06 + i * 0.02,
-      depthWrite: false,
-      blending: THREE.AdditiveBlending
-    });
-    const sprite = new THREE.Sprite(material);
-    sprite.scale.set(18 + i * 7, 9 + i * 3, 1);
-    sprite.position.set((i - 1.5) * 3.8, 7.2 + i * 1.6, -15 - i * 2.2);
-    sprite.userData = { phase: i * 0.8, baseX: sprite.position.x, baseY: sprite.position.y };
-    group.add(sprite);
-  }
-  root.add(group);
-  return group;
-}
-const auroraShell = createAuroraShell();
-
-function createGlowingBokeh() {
-  const group = new THREE.Group();
-  for (let i = 0; i < 24; i++) {
-    const sprite = new THREE.Sprite(new THREE.SpriteMaterial({
-      map: softDiscTexture,
-      color: i % 3 ? 0xffd24e : 0xfff1b0,
-      transparent: true,
-      opacity: 0.05 + Math.random() * 0.05,
-      depthWrite: false,
-      blending: THREE.AdditiveBlending
-    }));
-    const scale = 1.2 + Math.random() * 2.8;
-    sprite.scale.set(scale, scale, 1);
-    sprite.position.set((Math.random() - 0.5) * 40, 1.6 + Math.random() * 14, (Math.random() - 0.5) * 34 - 5);
-    sprite.userData = { phase: i * 0.45, drift: 0.04 + Math.random() * 0.05, scale };
-    group.add(sprite);
-  }
-  root.add(group);
-  return group;
-}
-const glowingBokeh = createGlowingBokeh();
-
-function createCenterCometRing() {
-  const group = new THREE.Group();
-  for (let i = 0; i < 10; i++) {
-    const geo = new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(0,0,0),
-      new THREE.Vector3(-0.75,0.1,0)
-    ]);
-    const line = new THREE.Line(
-      geo,
-      new THREE.LineBasicMaterial({
-        color: i % 2 ? 0xffefad : 0xffce49,
-        transparent: true,
-        opacity: 0.42,
-        blending: THREE.AdditiveBlending
-      })
-    );
-    line.userData = { angle: i / 10 * Math.PI * 2, radius: 3.8 + (i % 3) * 0.35, phase: i * 0.62 };
-    group.add(line);
-  }
-  root.add(group);
-  return group;
-}
-const centerCometRing = createCenterCometRing();
-
-function createOrbitRails() {
-  const group = new THREE.Group();
-  [8.2, 10.9, 13.8, 17.2].forEach((r, i) => {
-    const curve = new THREE.EllipseCurve(0, 0, r, r * 0.78, 0, Math.PI * 2, false, 0);
-    const pts = curve.getPoints(300).map(p => new THREE.Vector3(p.x, 0.18 + i * 0.36, p.y - 1.0));
-    const geo = new THREE.BufferGeometry().setFromPoints(pts);
-    const line = new THREE.LineLoop(
-      geo,
-      new THREE.LineBasicMaterial({
-        color: i % 2 ? 0xffdf78 : 0xfff2b8,
-        transparent: true,
-        opacity: 0.10 + i * 0.025,
-        blending: THREE.AdditiveBlending
-      })
-    );
-    group.add(line);
-  });
-  root.add(group);
-  return group;
-}
-const orbitRails = createOrbitRails();
-
 
 
 
@@ -1331,7 +1223,6 @@ const memoryCard = $("#memoryCard");
 const tooltip = $("#tooltip");
 const heartHint = $("#heartHint");
 const centerPhrase = $("#centerPhrase");
-const microBlessing = $("#microBlessing");
 let heartPhraseVisible = false;
 
 const music = $("#bgMusic");
@@ -1450,11 +1341,9 @@ function spawnDustBurst(x, y, count = 10) {
 }
 
 function spawnMagicBurst(x, y) {
-  spawnHeartBurst(x, y, 10);
-  spawnStarBurst(x, y, 8);
-  spawnDustBurst(x, y, 16);
-  spawnOrbitShimmer(x, y);
-  spawnBigHeart(x, y);
+  spawnHeartBurst(x, y, 8);
+  spawnStarBurst(x, y, 6);
+  spawnDustBurst(x, y, 12);
 }
 
 let lastTrailSpark = 0;
@@ -1471,25 +1360,6 @@ function spawnCursorSpark(x, y) {
   setTimeout(() => s.remove(), 850);
 }
 
-
-function spawnOrbitShimmer(x, y) {
-  const s = document.createElement("div");
-  s.className = "orbit-shimmer";
-  s.style.left = x + "px";
-  s.style.top = y + "px";
-  document.body.appendChild(s);
-  setTimeout(() => s.remove(), 1300);
-}
-
-function spawnBigHeart(x, y) {
-  const h = document.createElement("div");
-  h.className = "big-heart-pop";
-  h.textContent = Math.random() > 0.5 ? "💛" : "🌻";
-  h.style.left = x + "px";
-  h.style.top = y + "px";
-  document.body.appendChild(h);
-  setTimeout(() => h.remove(), 1500);
-}
 function spawnHeartPop(x, y) {
   const h = document.createElement("div");
   h.className = "heart-pop";
@@ -1517,8 +1387,6 @@ function showGalaxyUI() {
   setTimeout(() => hint.classList.add("hidden"), 7000);
   setTimeout(() => heartHint.classList.remove("hidden"), 2200);
   setTimeout(() => heartHint.classList.add("hidden"), 9000);
-  setTimeout(() => microBlessing.classList.remove("hidden"), 1600);
-  setTimeout(() => microBlessing.classList.add("hidden"), 9800);
 
   camera.position.set(0, 18, 38);
   controls.target.set(0, 1.4, -2.2);
@@ -1984,11 +1852,10 @@ function animate() {
 
     sprite.position.set(x, y, z);
 
-    // Keep phrases upright and elegant
+    // Keep phrases upright and readable
     const sPulse = 1 + reactiveMid * 0.08 + Math.sin(t * 1.2 + d.phase) * 0.018;
     sprite.scale.set(d.scaleX * sPulse, d.scaleY * sPulse, 1);
-    sprite.material.opacity = 0.66 + (Math.sin(t * 1.4 + d.phase) * 0.5 + 0.5) * 0.24 + reactiveHigh * 0.08;
-    sprite.material.rotation = Math.sin(t * 0.25 + d.phase) * 0.02;
+    sprite.material.opacity = 0.70 + (Math.sin(t * 1.4 + d.phase) * 0.5 + 0.5) * 0.22 + reactiveHigh * 0.08;
   });
 
 
@@ -2041,36 +1908,6 @@ function animate() {
       spr.scale.set(ss, ss, 1);
       spr.material.opacity = (hovered === gi ? 0.52 : 0.16) + (Math.sin(t * 3 + d.phase) * 0.5 + 0.5) * 0.16;
     });
-  });
-
-
-  auroraShell.children.forEach((sprite, i) => {
-    sprite.position.x = sprite.userData.baseX + Math.sin(t * 0.18 + sprite.userData.phase) * 1.2;
-    sprite.position.y = sprite.userData.baseY + Math.sin(t * 0.22 + sprite.userData.phase) * 0.35;
-    sprite.material.opacity = 0.04 + i * 0.015 + reactiveHigh * 0.03;
-  });
-
-  glowingBokeh.children.forEach((sprite) => {
-    const d = sprite.userData;
-    sprite.position.y += Math.sin(t * d.drift + d.phase) * 0.0015;
-    sprite.position.x += Math.cos(t * d.drift + d.phase) * 0.0012;
-    sprite.material.opacity = 0.04 + (Math.sin(t * 0.8 + d.phase) * 0.5 + 0.5) * 0.06;
-    const pulse = 1 + reactiveHigh * 0.12;
-    sprite.scale.set(d.scale * pulse, d.scale * pulse, 1);
-  });
-
-  centerCometRing.position.copy(centralGoldenHeart.position);
-  centerCometRing.children.forEach((line) => {
-    const d = line.userData;
-    const a = d.angle + t * 0.42 + Math.sin(t * 0.9 + d.phase) * 0.03;
-    line.position.set(Math.cos(a) * d.radius, 0.25 + Math.sin(t * 1.5 + d.phase) * 0.12, Math.sin(a) * d.radius * 0.78);
-    line.lookAt(0, line.position.y, 0);
-    line.material.opacity = 0.18 + reactiveHigh * 0.22;
-  });
-
-  orbitRails.rotation.y = Math.sin(t * 0.06) * 0.08;
-  orbitRails.children.forEach((line, i) => {
-    line.material.opacity = 0.05 + i * 0.02 + reactiveBass * 0.03;
   });
 
   composer.render();
