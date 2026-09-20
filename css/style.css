@@ -304,3 +304,67 @@ button{font:inherit}
   0%{opacity:.9;transform:translate(-50%,-50%) scale(.55)}
   100%{opacity:0;transform:translate(-50%,-70%) scale(1.45)}
 }
+
+
+/* ===== V9 ULTRA MEGA POLISH ===== */
+.micro-blessing{
+  position:fixed;
+  z-index:9;
+  top:76px;
+  left:50%;
+  transform:translateX(-50%);
+  padding:9px 15px;
+  border-radius:999px;
+  background:rgba(7,7,6,.62);
+  border:1px solid rgba(255,228,128,.18);
+  color:#f5e2a2;
+  font:italic 12px/1.2 "Cormorant Garamond", Georgia, serif;
+  backdrop-filter:blur(10px);
+  box-shadow:0 0 24px rgba(255,202,59,.08);
+  transition:.5s;
+  pointer-events:none;
+  white-space:nowrap
+}
+.orbit-shimmer{
+  position:fixed;
+  z-index:6;
+  width:120px;
+  height:120px;
+  pointer-events:none;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(255,244,195,.24) 0%, rgba(255,212,64,.18) 18%, rgba(255,212,64,0) 72%);
+  filter:blur(2px);
+  animation:orbitShimmer 1.25s ease-out forwards
+}
+@keyframes orbitShimmer{
+  0%{opacity:.9;transform:translate(-50%,-50%) scale(.2)}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(1.55)}
+}
+.big-heart-pop{
+  position:fixed;
+  z-index:8;
+  pointer-events:none;
+  font-size:28px;
+  color:#ffe26d;
+  text-shadow:0 0 24px rgba(255,210,45,.95);
+  animation:bigHeartPop 1.45s ease-out forwards
+}
+@keyframes bigHeartPop{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.35) rotate(-10deg)}
+  16%{opacity:1}
+  100%{opacity:0;transform:translate(-50%,-180px) scale(1.55) rotate(16deg)}
+}
+.memory-card{
+  background:
+    linear-gradient(145deg,rgba(8,8,8,.95),rgba(27,21,8,.86)),
+    radial-gradient(circle at 18% 12%, rgba(255,213,77,.08), transparent 30%);
+}
+.welcome-card{
+  background:
+    radial-gradient(circle at 50% 12%, rgba(255,230,126,.05), transparent 26%),
+    linear-gradient(145deg,rgba(7,7,7,.92),rgba(19,16,7,.75))
+}
+.brand b{color:#fff3bd}
+.hud nav button:hover{
+  box-shadow:0 0 28px rgba(255,214,71,.18);
+}
