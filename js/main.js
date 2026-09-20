@@ -100,7 +100,7 @@ const glowTexture = makeGlowTexture();
 --------------------------------------------------------- */
 
 function createStarCloud() {
-  const count = 5200;
+  const count = 7200;
   const positions = new Float32Array(count * 3);
   const colors = new Float32Array(count * 3);
 
@@ -145,7 +145,7 @@ const starCloud = createStarCloud();
 --------------------------------------------------------- */
 
 function createGalaxyFloor() {
-  const count = 36000;
+  const count = 43000;
   const positions = new Float32Array(count * 3);
   const colors = new Float32Array(count * 3);
   const sizes = new Float32Array(count);
@@ -511,7 +511,7 @@ createOrbitLines();
 --------------------------------------------------------- */
 
 function createMotes() {
-  const count = 650;
+  const count = 980;
   const positions = new Float32Array(count * 3);
 
   for (let i = 0; i < count; i++) {
@@ -576,7 +576,7 @@ const heartTexture = makeHeartTexture();
 function createHeartField() {
   const group = new THREE.Group();
 
-  for (let i = 0; i < 44; i++) {
+  for (let i = 0; i < 60; i++) {
     const mat = new THREE.SpriteMaterial({
       map: heartTexture,
       transparent: true,
@@ -765,7 +765,7 @@ function createPetalStream() {
   const group = new THREE.Group();
   const petals = [];
 
-  for (let i = 0; i < 70; i++) {
+  for (let i = 0; i < 96; i++) {
     const sprite = new THREE.Sprite(
       new THREE.SpriteMaterial({
         map: petalTexture,
@@ -952,6 +952,28 @@ function createCentralGoldenHeart() {
 }
 
 const centralGoldenHeart = createCentralGoldenHeart();
+
+function createCenterStarHalo() {
+  const group = new THREE.Group();
+  for (let i = 0; i < 22; i++) {
+    const s = new THREE.Sprite(new THREE.SpriteMaterial({
+      map: glowTexture,
+      color: i % 2 ? 0xfff2b2 : 0xffcf3c,
+      transparent: true,
+      opacity: 0.42,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending
+    }));
+    const size = 0.10 + (i % 4) * 0.03;
+    s.scale.set(size, size, 1);
+    s.userData = { angle: i / 22 * Math.PI * 2, radius: 3.0 + (i % 3) * 0.32, phase: i * 0.23, base: size };
+    group.add(s);
+  }
+  root.add(group);
+  return group;
+}
+const centerStarHalo = createCenterStarHalo();
+
 
 
 /* ---------------------------------------------------------
@@ -1533,6 +1555,24 @@ function animate() {
     spr.scale.set(ss,ss,1);
     spr.material.opacity = 0.26 + (Math.sin(t*2.4+d.phase)*0.5+0.5)*0.44;
   });
+
+
+  // richer sparkle halo around the central heart
+  centerStarHalo.position.copy(centralGoldenHeart.position);
+  centerStarHalo.children.forEach((spr, i) => {
+    const d = spr.userData;
+    const a = d.angle + t * (0.22 + (i % 3) * 0.04);
+    const r = d.radius + Math.sin(t * 1.2 + d.phase) * 0.10;
+    spr.position.set(Math.cos(a) * r, 0.65 + Math.sin(t * 2.0 + d.phase) * 0.30, Math.sin(a) * r * 0.78);
+    const ss = d.base * (1 + reactiveHigh * 0.38);
+    spr.scale.set(ss, ss, 1);
+    spr.material.opacity = 0.22 + (Math.sin(t * 3.2 + d.phase) * 0.5 + 0.5) * 0.36;
+  });
+
+  // A touch more magic in the welcome card when audio is playing
+  if (musicEnabled) {
+    heartHint.style.letterSpacing = (0.18 + reactiveHigh * 0.10).toFixed(2) + "em";
+  }
 
   composer.render();
   requestAnimationFrame(animate);

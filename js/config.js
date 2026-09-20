@@ -12,7 +12,9 @@ export const GALAXY_CONFIG = {
     "GRACIAS POR ESTAR",
     "BRILLA MUCHO",
     "QUE TENGAS UN BONITO DÍA",
-    "DANI"
+    "DANI",
+    "MAKIS",
+    "STRAY KIDS"
   ],
 
   memories: [
@@ -63,6 +65,22 @@ export const GALAXY_CONFIG = {
       image: "./assets/sun.png",
       radius: 9.8,
       angle: 5.26
+    },
+    {
+      title: "Makis contigo",
+      kicker: "UN GUSTITO BONITO",
+      text: "Como sé que te gustan los makis, esta galaxia también guarda un rincón con ese toque rico y bonito que te representa.",
+      image: "./assets/makis.png",
+      radius: 12.9,
+      angle: 0.98
+    },
+    {
+      title: "Tu vibe musical",
+      kicker: "PLAYLIST AMARILLA",
+      text: "Y como también te gusta Stray Kids, dejé un pequeño rincón musical para que la galaxia tenga un pedacito de tu vibra.",
+      image: "./assets/playlist.png",
+      radius: 13.3,
+      angle: 4.95
     }
   ]
 };
