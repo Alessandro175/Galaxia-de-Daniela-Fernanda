@@ -91,7 +91,7 @@ export const GALAXY_CONFIG = {
     },
     {
       title: "Makis contigo",
-      kicker: "UN GUSTITO BONITO",
+      kicker: "TU COMIDA FAVORITA",
       text: "Como sé que te gustan los makis, esta galaxia también guarda un rincón con ese toque rico y bonito que te representa.",
       image: "./assets/makis.png",
       radius: 12.9,
@@ -99,7 +99,7 @@ export const GALAXY_CONFIG = {
     },
     {
       title: "Tu vibe musical",
-      kicker: "PLAYLIST AMARILLA",
+      kicker: "PLAYLIST PARA TI",
       text: "Y como también te gusta Stray Kids, dejé un pequeño rincón musical para que la galaxia tenga un pedacito de tu vibra.",
       image: "./assets/playlist.png",
       radius: 13.3,
